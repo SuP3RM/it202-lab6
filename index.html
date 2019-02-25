@@ -4,8 +4,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
-  <title>Lab 6</title>
+  <title>3 screen app</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
 
   <style>
     .content {
@@ -28,55 +29,101 @@
           <a class="nav-link" href="#home">Home <span class="sr-only">(current)</span></a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#screen2">List</a>
+          <a class="nav-link" href="#list">List</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#screen3">Detail</a>
+          <a class="nav-link" href="#screen3">Screen 3</a>
         </li>
       </ul>
     </div>
   </nav>
   <div class="content" id="home">
     Home page
-    <input type="text" id="subject" placeholder="Enter a subject">
-    <textarea id="comment" palceholder="Enter a comment" name="name" rows="8" cols="80"></textarea>
-    <button type="button" name="button">Submit</button>
+    <br>
+    <input type="text" id="subject" placeholder="Enter a subject"><br>
+    <textarea id="content" placeholder="Enter the content"></textarea><br>
+    <button id="saveNote">Save</button>
   </div>
-  <div class="content" id="screen2">
+  <div class="content" id="list">
     List
   </div>
   <div class="content" id="screen3">
-    Detail
+    This is screen 3
   </div>
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
   <script src="https://unpkg.com/dexie@latest/dist/dexie.js"></script>
 
   <script>
-    let db = new Dexie("notes_database");
+    var
+      // loop through notes
+      db = new Dexie("notes_database");
+
+    // loop through notes
     db.version(1).stores({
-        notes: 'subject'
+      notes: "subject"
     });
 
-    db.notes.put({subject: "Dave"});
+    //
+    // loop through notes
+    db.notes.put({
+      subject: "test"
+    });
+
 
     $(document).ready(function() {
 
+      $("#home").show();
+
+
       function hideScreens() {
         $(".content").hide();
+      }
+
+
+      function loadNotesList() {
+        // clear contents
+        $("#list").empty();
+        // loop through notes
+        db.notes.each(function(note) {
+
+          var p = $("<p>");
+          p.text(note.subject);
+
+          $("#list").append(p);
+        });
       }
 
       $(".nav-link").on("click", function() {
         hideScreens();
         var target = $(this).attr("href");
         $(target).show();
+
+        if (target == "#list") {
+          loadNotesList();
+
+
+        }
+
+
+
       });
 
-      $("#saveNote").on("click", function() {
 
-      })
+      $("#saveNote").on("click", function() {
+        var subject = $("#subject").val();
+        var content = $("#content").val();
+
+        // loop through notes
+        db.notes.put({
+          subject: subject,
+          content: content,
+          date: new Date()
+        });
+      });
 
     });
   </script>
